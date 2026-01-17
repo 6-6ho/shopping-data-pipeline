@@ -80,13 +80,13 @@ services:
       - "7077:7077"
       - "4040:4040"
     environment:
-      - SPARK_MODE=master
       - SPARK_MASTER_HOST=spark-master
       - SPARK_MASTER_PORT=7077
       - SPARK_MASTER_WEBUI_PORT=8080
       - AWS_ACCESS_KEY_ID=${MINIO_ROOT_USER:-minioadmin}
       - AWS_SECRET_ACCESS_KEY=${MINIO_ROOT_PASSWORD:-minioadmin123}
       - AWS_REGION=us-east-1
+    command: /opt/spark/bin/spark-class org.apache.spark.deploy.master.Master
     volumes:
       - ../spark-jobs:/opt/spark-jobs
       - spark-logs:/opt/spark/logs
@@ -103,20 +103,18 @@ services:
     ports:
       - "8081:8081"
     environment:
-      - SPARK_MODE=worker
-      - SPARK_MASTER_URL=spark://spark-master:7077
       - SPARK_WORKER_MEMORY=2g
       - SPARK_WORKER_CORES=2
       - SPARK_WORKER_WEBUI_PORT=8081
       - AWS_ACCESS_KEY_ID=${MINIO_ROOT_USER:-minioadmin}
       - AWS_SECRET_ACCESS_KEY=${MINIO_ROOT_PASSWORD:-minioadmin123}
       - AWS_REGION=us-east-1
+    command: /opt/spark/bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077
     volumes:
       - ../spark-jobs:/opt/spark-jobs
     networks:
       - pipeline-network
 
-  # Additional workers for scaling
   spark-worker-2:
     build:
       context: ./spark
@@ -127,14 +125,13 @@ services:
     ports:
       - "8082:8082"
     environment:
-      - SPARK_MODE=worker
-      - SPARK_MASTER_URL=spark://spark-master:7077
       - SPARK_WORKER_MEMORY=2g
       - SPARK_WORKER_CORES=2
       - SPARK_WORKER_WEBUI_PORT=8082
       - AWS_ACCESS_KEY_ID=${MINIO_ROOT_USER:-minioadmin}
       - AWS_SECRET_ACCESS_KEY=${MINIO_ROOT_PASSWORD:-minioadmin123}
       - AWS_REGION=us-east-1
+    command: /opt/spark/bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077
     volumes:
       - ../spark-jobs:/opt/spark-jobs
     networks:
@@ -152,14 +149,13 @@ services:
     ports:
       - "8083:8083"
     environment:
-      - SPARK_MODE=worker
-      - SPARK_MASTER_URL=spark://spark-master:7077
       - SPARK_WORKER_MEMORY=2g
       - SPARK_WORKER_CORES=2
       - SPARK_WORKER_WEBUI_PORT=8083
       - AWS_ACCESS_KEY_ID=${MINIO_ROOT_USER:-minioadmin}
       - AWS_SECRET_ACCESS_KEY=${MINIO_ROOT_PASSWORD:-minioadmin123}
       - AWS_REGION=us-east-1
+    command: /opt/spark/bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077
     volumes:
       - ../spark-jobs:/opt/spark-jobs
     networks:
@@ -177,14 +173,13 @@ services:
     ports:
       - "8084:8084"
     environment:
-      - SPARK_MODE=worker
-      - SPARK_MASTER_URL=spark://spark-master:7077
       - SPARK_WORKER_MEMORY=2g
       - SPARK_WORKER_CORES=2
       - SPARK_WORKER_WEBUI_PORT=8084
       - AWS_ACCESS_KEY_ID=${MINIO_ROOT_USER:-minioadmin}
       - AWS_SECRET_ACCESS_KEY=${MINIO_ROOT_PASSWORD:-minioadmin123}
       - AWS_REGION=us-east-1
+    command: /opt/spark/bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077
     volumes:
       - ../spark-jobs:/opt/spark-jobs
     networks:
@@ -215,7 +210,7 @@ services:
     environment:
       - AIRFLOW__CORE__EXECUTOR=LocalExecutor
       - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://${POSTGRES_USER:-airflow}:${POSTGRES_PASSWORD:-airflow}@postgres:5432/airflow
-      - AIRFLOW__CORE__FERNET_KEY=your-fernet-key-here-must-be-32-bytes
+      - AIRFLOW__CORE__FERNET_KEY=uf-JR5_b0p-7xWdvf0FS-5q-NXmEfrQqqOx8UHVWnCc=
       - AIRFLOW__CORE__LOAD_EXAMPLES=False
     command: >
       bash -c "
@@ -238,7 +233,7 @@ services:
     environment:
       - AIRFLOW__CORE__EXECUTOR=LocalExecutor
       - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://${POSTGRES_USER:-airflow}:${POSTGRES_PASSWORD:-airflow}@postgres:5432/airflow
-      - AIRFLOW__CORE__FERNET_KEY=your-fernet-key-here-must-be-32-bytes
+      - AIRFLOW__CORE__FERNET_KEY=uf-JR5_b0p-7xWdvf0FS-5q-NXmEfrQqqOx8UHVWnCc=
       - AIRFLOW__CORE__LOAD_EXAMPLES=False
       - AIRFLOW__WEBSERVER__EXPOSE_CONFIG=True
     volumes:
@@ -258,7 +253,7 @@ services:
     environment:
       - AIRFLOW__CORE__EXECUTOR=LocalExecutor
       - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://${POSTGRES_USER:-airflow}:${POSTGRES_PASSWORD:-airflow}@postgres:5432/airflow
-      - AIRFLOW__CORE__FERNET_KEY=your-fernet-key-here-must-be-32-bytes
+      - AIRFLOW__CORE__FERNET_KEY=uf-JR5_b0p-7xWdvf0FS-5q-NXmEfrQqqOx8UHVWnCc=
       - AIRFLOW__CORE__LOAD_EXAMPLES=False
     volumes:
       - ../airflow/dags:/opt/airflow/dags
@@ -309,8 +304,8 @@ services:
     container_name: prometheus
     ports:
       - "9090:9090"
-    # volumes:
-    #   - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
     networks:
       - pipeline-network
     profiles:

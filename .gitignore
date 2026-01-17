@@ -1,0 +1,54 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+.eggs/
+dist/
+build/
+*.egg
+
+# Environment
+.env.local
+.venv/
+venv/
+ENV/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Logs
+*.log
+logs/
+
+# Data files
+*.parquet
+*.avro
+*.csv
+!data-generator/data/*.csv
+
+# Docker volumes (local only)
+docker/volumes/
+
+# Spark checkpoints
+checkpoints/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test artifacts
+spark-jobs/test_*.py
+!spark-jobs/test_iceberg.py
+
+# Temporary files
+*.tmp
+*.temp

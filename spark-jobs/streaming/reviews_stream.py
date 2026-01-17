@@ -24,7 +24,7 @@ def create_spark_session():
         .config("spark.sql.extensions", "org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions") \
         .config("spark.sql.catalog.iceberg", "org.apache.iceberg.spark.SparkCatalog") \
         .config("spark.sql.catalog.iceberg.type", "hadoop") \
-        .config("spark.sql.catalog.iceberg.warehouse", "s3a://iceberg-warehouse/") \
+        .config("spark.sql.catalog.iceberg.warehouse", "s3a://iceberg-warehouse/data/") \
         .config("spark.hadoop.fs.s3a.endpoint", "http://minio:9000") \
         .config("spark.hadoop.fs.s3a.access.key", "minioadmin") \
         .config("spark.hadoop.fs.s3a.secret.key", "minioadmin123") \
@@ -122,11 +122,21 @@ def process_reviews(spark):
         .drop("images")  # Store image refs separately if needed
 
     # Add empty sentiment_keywords for now (batch job will populate)
-    from pyspark.sql.functions import array, lit
-    transformed_df = transformed_df.withColumn("sentiment_keywords", array())
+    # Using typed empty array to avoid void type issue
+    from pyspark.sql.types import ArrayType, StringType
+    from pyspark.sql.functions import lit, udf
+    empty_string_array = udf(lambda: [], ArrayType(StringType()))
+    transformed_df = transformed_df.withColumn("sentiment_keywords", empty_string_array())
+
+    # Reorder columns to match Iceberg table schema exactly
+    final_df = transformed_df.select(
+        "review_id", "product_id", "user_id", "rating", "review_text",
+        "text_length", "image_count", "has_images", "helpful_count",
+        "verified_purchase", "created_at", "created_date", "sentiment_keywords"
+    )
 
     # Write to Iceberg
-    query = transformed_df \
+    query = final_df \
         .writeStream \
         .format("iceberg") \
         .outputMode("append") \

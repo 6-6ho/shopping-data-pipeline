@@ -1,0 +1,12 @@
+global:
+  scrape_interval: 5s
+  evaluation_interval: 5s
+
+scrape_configs:
+  - job_name: 'data-generator'
+    static_configs:
+      - targets: ['data-generator:8000']
+
+  - job_name: 'kafka'
+    static_configs:
+      - targets: ['kafka:9092'] # Assuming JMX exporter or similar if enabled, but let's stick to basic for now

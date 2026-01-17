@@ -19,7 +19,9 @@ class SparkConfig:
     S3_SECRET_KEY: str = os.getenv("AWS_SECRET_ACCESS_KEY", "minioadmin123")
 
     # Iceberg Configuration
-    ICEBERG_WAREHOUSE: str = os.getenv("ICEBERG_WAREHOUSE", "s3a://iceberg-warehouse/")
+    # Force trailing slash and hardcode to avoid environment issues for now
+    ICEBERG_WAREHOUSE: str = "s3a://iceberg-warehouse/data/"
+    print(f"DEBUG: ICEBERG_WAREHOUSE set to '{ICEBERG_WAREHOUSE}' from {__file__}", flush=True)
     ICEBERG_CATALOG: str = "iceberg"
 
     # Kafka Configuration

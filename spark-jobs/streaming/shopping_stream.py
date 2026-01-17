@@ -137,10 +137,19 @@ def process_shopping_events(spark):
         .withColumn("campaign_name", col("context.campaign.name")) \
         .drop("timestamp", "device", "context")
 
+    # Select columns in strict order to match Iceberg table schema
+    final_df = transformed_df.select(
+        "event_id", "event_type", "user_id", "product_id", "product_name", 
+        "category", "brand", "price", "event_timestamp", "session_id",
+        "device_type", "device_os", "device_app_version", "referrer",
+        "campaign_id", "campaign_name", "quantity", "total_amount", 
+        "payment_method", "event_date", "event_hour"
+    )
+
     # Write to Iceberg
     checkpoint_path = get_checkpoint_path("shopping-events")
     
-    query = transformed_df \
+    query = final_df \
         .writeStream \
         .format("iceberg") \
         .outputMode("append") \

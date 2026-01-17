@@ -40,6 +40,13 @@
         "y": 0
       },
       "id": 1,
+      "targets": [
+        {
+          "expr": "sum(increase(events_sent_total[5m]))",
+          "legendFormat": "Events",
+          "refId": "A"
+        }
+      ],
       "options": {
         "colorMode": "value",
         "graphMode": "area",
@@ -187,6 +194,13 @@
         "y": 0
       },
       "id": 4,
+      "targets": [
+        {
+          "expr": "sum(increase(events_sent_total{type=\"purchase\"}[5m]))",
+          "legendFormat": "Orders",
+          "refId": "A"
+        }
+      ],
       "options": {
         "colorMode": "value",
         "graphMode": "area",
@@ -266,6 +280,13 @@
         "y": 4
       },
       "id": 5,
+      "targets": [
+        {
+          "expr": "sum(rate(events_sent_total[1m]))",
+          "legendFormat": "Rate (per sec)",
+          "refId": "A"
+        }
+      ],
       "options": {
         "legend": {
           "calcs": [],
@@ -387,6 +408,13 @@
         "y": 12
       },
       "id": 7,
+      "targets": [
+        {
+          "expr": "sum(increase(events_sent_total[5m])) by (type)",
+          "legendFormat": "{{type}}",
+          "refId": "A"
+        }
+      ],
       "options": {
         "legend": {
           "displayMode": "list",
@@ -500,6 +528,13 @@
         "y": 12
       },
       "id": 9,
+      "targets": [
+        {
+          "expr": "traffic_multiplier",
+          "legendFormat": "Multiplier",
+          "refId": "A"
+        }
+      ],
       "options": {
         "orientation": "auto",
         "reduceOptions": {
