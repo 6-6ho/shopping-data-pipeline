@@ -282,9 +282,14 @@
       "id": 5,
       "targets": [
         {
-          "expr": "sum(rate(events_sent_total[1m]))",
-          "legendFormat": "Rate (per sec)",
+          "expr": "rate(events_sent_total[1m]) * 60",
+          "legendFormat": "Event Rate (per min)",
           "refId": "A"
+        },
+        {
+          "expr": "300",
+          "legendFormat": "Anomaly Threshold",
+          "refId": "B"
         }
       ],
       "options": {
