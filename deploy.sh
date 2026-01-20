@@ -190,10 +190,10 @@ show_status() {
     echo ""
     log_info "Access URLs:"
     HOST_IP=$(get_host_ip)
-    echo "  - Grafana:      http://${HOST_IP}:3000 (admin/admin)"
-    echo "  - Spark Master: http://${HOST_IP}:8080"
+    echo "  - Grafana:      http://${HOST_IP}:3002 (admin/admin)"
+    echo "  - Spark Master: http://${HOST_IP}:8088"
     echo "  - Airflow:      http://${HOST_IP}:8090 (admin/admin)"
-    echo "  - MinIO:        http://${HOST_IP}:9001 (minioadmin/minioadmin123)"
+    echo "  - MinIO:        http://${HOST_IP}:9002 (minioadmin/minioadmin123)"
     echo "  - Prometheus:   http://${HOST_IP}:9091"
 }
 
