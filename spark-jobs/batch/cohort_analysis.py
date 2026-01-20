@@ -102,17 +102,30 @@ def calculate_cohort_retention(spark, target_date_str):
         .orderBy("cohort_week", "period_week")
 
     # 7. Write to Iceberg
-    # We overwrite the partition for the calculation date to prevent dupes if rerun
-    # Actually for cohort analysis, we typically append or overwrite fully based on strictness.
-    # Here we will append, but dealing with duplicates requires care. 
-    # Simplified: Overwrite entire table for now as it's a small derived dataset
-    
     final_metrics.write \
         .format("iceberg") \
         .mode("overwrite") \
         .saveAsTable("iceberg.shopping.cohort_retention")
         
-    print("Cohort analysis saved.")
+    print("Cohort analysis saved to Iceberg.")
+
+    # 8. Write to Postgres (Dashboard DB)
+    print("Writing to Postgres...")
+    jdbc_url = "jdbc:postgresql://postgres:5432/airflow"
+    props = {
+        "user": "airflow",
+        "password": "airflow",
+        "driver": "org.postgresql.Driver"
+    }
+    
+    try:
+        final_metrics.write \
+            .jdbc(url=jdbc_url, table="analytics_cohort_retention", mode="overwrite", properties=props)
+        print("Cohort analysis synced to Postgres.")
+    except Exception as e:
+        print(f"Failed to write to Postgres: {e}")
+        print("Ensure Postgres is running and accessible.")
+    
     final_metrics.show(20)
 
 def main():

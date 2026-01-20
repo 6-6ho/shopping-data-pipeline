@@ -117,13 +117,33 @@ def process_anomalies(spark):
     # Write to Console (for debug)
     # anomalies.writeStream.format("console").option("truncate", "false").start()
 
-    # Write to Iceberg
+    # Write to Iceberg and Postgres using foreachBatch
+    def write_to_sinks(batch_df, batch_id):
+        # 1. Write to Iceberg
+        batch_df.write \
+            .format("iceberg") \
+            .mode("append") \
+            .saveAsTable("iceberg.shopping.anomaly_alerts")
+            
+        # 2. Write to Postgres
+        try:
+            jdbc_url = "jdbc:postgresql://postgres:5432/airflow"
+            props = {
+                "user": "airflow",
+                "password": "airflow",
+                "driver": "org.postgresql.Driver"
+            }
+            batch_df.write \
+                .jdbc(url=jdbc_url, table="analytics_anomaly_alerts", mode="append", properties=props)
+        except Exception as e:
+            pass # Ignore postgres errors in stream to prevent crash
+
     query = anomalies \
         .writeStream \
-        .format("iceberg") \
+        .foreachBatch(write_to_sinks) \
         .outputMode("append") \
-        .option("checkpointLocation", "s3a://raw/checkpoints/anomaly_detection") \
-        .toTable("iceberg.shopping.anomaly_alerts")
+        .option("checkpointLocation", "s3a://raw/checkpoints/anomaly_detection_v2") \
+        .start()
         
     return query
 
