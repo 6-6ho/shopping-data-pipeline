@@ -194,7 +194,7 @@ show_status() {
     echo "  - Spark Master: http://${HOST_IP}:8080"
     echo "  - Airflow:      http://${HOST_IP}:8090 (admin/admin)"
     echo "  - MinIO:        http://${HOST_IP}:9001 (minioadmin/minioadmin123)"
-    echo "  - Prometheus:   http://${HOST_IP}:9090"
+    echo "  - Prometheus:   http://${HOST_IP}:9091"
 }
 
 run_batch_jobs() {
