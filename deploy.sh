@@ -144,22 +144,16 @@ start_streaming_jobs() {
     # Start shopping events streaming
     docker exec -d spark-master bash -c "/opt/spark/bin/spark-submit \
         --master local[2] \
-        --conf spark.jars.ivy=/tmp/ivy \
-        --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.0,org.apache.iceberg:iceberg-spark-runtime-3.5_2.12:1.4.2,org.apache.hadoop:hadoop-aws:3.3.4 \
         /opt/spark-jobs/streaming/shopping_stream.py > /tmp/shopping_stream.log 2>&1"
     
     # Start reviews streaming
     docker exec -d spark-master bash -c "/opt/spark/bin/spark-submit \
         --master local[2] \
-        --conf spark.jars.ivy=/tmp/ivy \
-        --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.0,org.apache.iceberg:iceberg-spark-runtime-3.5_2.12:1.4.2,org.apache.hadoop:hadoop-aws:3.3.4 \
         /opt/spark-jobs/streaming/reviews_stream.py > /tmp/reviews_stream.log 2>&1"
 
     # Start anomaly detection streaming
     docker exec -d spark-master bash -c "/opt/spark/bin/spark-submit \
         --master local[2] \
-        --conf spark.jars.ivy=/tmp/ivy \
-        --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.0,org.apache.iceberg:iceberg-spark-runtime-3.5_2.12:1.4.2,org.apache.hadoop:hadoop-aws:3.3.4 \
         /opt/spark-jobs/streaming/anomaly_detection.py > /tmp/anomaly_detection.log 2>&1"
     
     log_success "Streaming jobs started!"
@@ -209,8 +203,6 @@ run_batch_jobs() {
     # Daily Aggregation
     docker exec spark-master /opt/spark/bin/spark-submit \
         --master local[*] \
-        --conf spark.jars.ivy=/tmp/ivy \
-        --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.0,org.apache.iceberg:iceberg-spark-runtime-3.5_2.12:1.4.2,org.apache.hadoop:hadoop-aws:3.3.4 \
         /opt/spark-jobs/batch/daily_aggregation.py ${TODAY}
     
     log_success "Daily aggregation completed!"
@@ -218,8 +210,6 @@ run_batch_jobs() {
     # Cohort Analysis
     docker exec spark-master /opt/spark/bin/spark-submit \
         --master local[*] \
-        --conf spark.jars.ivy=/tmp/ivy \
-        --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.0,org.apache.iceberg:iceberg-spark-runtime-3.5_2.12:1.4.2,org.apache.hadoop:hadoop-aws:3.3.4 \
         /opt/spark-jobs/batch/cohort_analysis.py ${TODAY}
     
     log_success "Cohort analysis completed!"
@@ -227,8 +217,6 @@ run_batch_jobs() {
     # Review Analysis (if reviews exist)
     docker exec spark-master /opt/spark/bin/spark-submit \
         --master local[*] \
-        --conf spark.jars.ivy=/tmp/ivy \
-        --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.0,org.apache.iceberg:iceberg-spark-runtime-3.5_2.12:1.4.2,org.apache.hadoop:hadoop-aws:3.3.4 \
         /opt/spark-jobs/batch/review_analysis.py ${TODAY} || log_warning "Review analysis skipped (no data)"
     
     log_success "Batch jobs completed!"
