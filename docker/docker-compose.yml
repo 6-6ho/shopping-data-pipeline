@@ -324,7 +324,7 @@ services:
     build:
       context: ../dashboard
       dockerfile: Dockerfile
-    container_name: dashboard
+    container_name: shop-frontend
     ports:
       - "8501:8501"
     environment:
@@ -337,23 +337,17 @@ services:
       - postgres
     networks:
       - pipeline-network
+      - appnet
 
-  # ============== Nginx (Reverse Proxy) ==============
-  nginx:
-    image: nginx:latest
-    container_name: nginx-proxy
-    ports:
-      - "80:80"
-    volumes:
-      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
-    depends_on:
-      - dashboard
-    networks:
-      - pipeline-network
+
 
 networks:
   pipeline-network:
     driver: bridge
+
+  appnet:
+    external: true
+    name: trade-helper_appnet
 
 volumes:
   minio-data:

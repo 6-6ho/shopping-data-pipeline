@@ -117,6 +117,9 @@ start_core_services() {
     # Start Grafana
     docker compose up -d grafana
     
+    # Start Dashboard
+    docker compose up -d dashboard
+
     # Start Prometheus (monitoring profile)
     docker compose --profile monitoring up -d prometheus
     
@@ -190,6 +193,7 @@ show_status() {
     echo ""
     log_info "Access URLs:"
     HOST_IP=$(get_host_ip)
+    echo "  - Shop Dashboard: http://shop.junho.in (via Shared Network)"
     echo "  - Grafana:      http://${HOST_IP}:3002 (admin/admin)"
     echo "  - Spark Master: http://${HOST_IP}:8088"
     echo "  - Airflow:      http://${HOST_IP}:8090 (admin/admin)"
